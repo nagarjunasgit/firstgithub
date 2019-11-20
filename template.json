@@ -1,0 +1,49 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sqlserv255Name": {
+            "type":"string"
+        },
+        "sqlserv255AdminLogin": {
+            "type": "string",
+            "minLength": 1
+        },
+        "sqlserv255AdminLoginPassword": {
+            "type": "securestring"
+        }
+    },
+    "resources": [
+        {
+            "name": "[parameters('sqlserv255Name')]",
+            "type": "Microsoft.Sql/servers",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2014-04-01-preview",
+            "dependsOn": [],
+            "tags": {
+                "displayName": "sqlserv255"
+            },
+            "properties": {
+                "administratorLogin": "[parameters('sqlserv255AdminLogin')]",
+                "administratorLoginPassword": "[parameters('sqlserv255AdminLoginPassword')]"
+            },
+            "resources": [
+                {
+                    "name": "AllowAllWindowsAzureIps",
+                    "type": "firewallrules",
+                    "location": "[resourceGroup().location]",
+                    "apiVersion": "2014-04-01-preview",
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/', variables('sqlserv255Name'))]"
+                    ],
+                    "properties": {
+                        "startIpAddress": "0.0.0.0",
+                        "endIpAddress": "0.0.0.0"
+                    }
+                }
+            ]
+        }
+    ],
+    "variables": {
+    }
+}
